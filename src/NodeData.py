@@ -1,6 +1,7 @@
 
 from src import NodeData
 from src import GeoLocation
+from GeoLocation import GeoLocation
 
 
 class NodeData:
@@ -21,7 +22,7 @@ class NodeData:
             self.__weight = weight
             self.__tag = tag
             self.__info = info
-            self.__location = "random"
+            self.__location = GeoLocation(0,0,0)
             self.__Neighbors = {}
 
     def getNeis(self)->{}:

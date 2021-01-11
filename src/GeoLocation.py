@@ -7,18 +7,7 @@ class GeoLocation:
     nodes in a (directional) weighted graph.
     """
 
-    def __init__(self, x: float = None, y: float = None, z: float = None, geo_location: GeoLocation = None, pos: str = None):
-        if geo_location is not None and(x is None and y is None and z is None and pos is None):
-            self.__x = geo_location.getx()
-            self.__y = geo_location.gety()
-            self.__z = geo_location.getz()
-        elif (geo_location is None and x is None and y is None and z is None) and pos is not None:
-            position=pos.split(',')
-
-            self.__x = float(position.pop(0))
-            self.__y = float(position.pop(0))
-            self.__z = float(position.pop(0))
-        else:
+    def __init__(self, x: float = None, y: float = None, z: float = None):
             self.__x = x
             self.__y = y
             self.__z = z
