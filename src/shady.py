@@ -1,5 +1,4 @@
 from NodeData import NodeData
-from GeoLocation import GeoLocation
 import copy
 
 
@@ -20,15 +19,14 @@ def check_node():
     print(node1.getNeis())
 
 def check_geolocation():
-        geo1=GeoLocation(1, 2, 3)
-        geo2=copy.deepcopy(geo1)
-        node1 = NodeData(5, 6, 'shady',geo1)
+        node1 = NodeData(5, 6, 'shady',(0,1,2))
         node2=NodeData(5, 6, 'shady')
-        node1.setLoc(geo2)
-        print(geo1)
-        print(geo2)
         print(node1.getLoc())
         print(node2.getLoc())
+        node2.setLoc((2,7.5,9))
+        print(node2.getLoc())
+
+
 
 
 

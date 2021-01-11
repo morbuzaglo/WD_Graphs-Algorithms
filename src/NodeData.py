@@ -1,29 +1,29 @@
 
 from src import NodeData
-from src import GeoLocation
-from GeoLocation import GeoLocation
 
 
 class NodeData:
     __global_key = 0
 
-    def __init__(self, weight: float, tag: float, info: str, geo_location: GeoLocation = None):
-        if geo_location is not None:
+    def __init__(self, weight: float, tag: float, info: str, location: tuple = None):
+        if location is not None:
             self.__key = NodeData.__global_key
             NodeData.__global_key = NodeData.__global_key + 1
             self.__weight = weight
             self.__tag = tag
             self.__info = info
-            self.__location = geo_location
+            self.__location = location
             self.__Neighbors = {}
+            self.__Edges={}
         else:
             self.__key = NodeData.__global_key
             NodeData.__global_key = NodeData.__global_key + 1
             self.__weight = weight
             self.__tag = tag
             self.__info = info
-            self.__location = GeoLocation(0,0,0)
+            self.__location = (0,0,0)
             self.__Neighbors = {}
+            self.__Edges={}
 
     def getNeis(self)->{}:
         return self.__Neighbors
@@ -41,13 +41,13 @@ class NodeData:
 
         return self.__key
 
-    def getLoc(self)->GeoLocation:
+    def getLoc(self)->tuple:
 
         return self.__location
 
-    def setLoc(self, geo_location: GeoLocation):
+    def setLoc(self, location: tuple):
 
-        self.__location = geo_location
+        self.__location = location
 
     def getWeight(self)->float:
 
