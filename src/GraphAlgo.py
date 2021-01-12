@@ -1,5 +1,8 @@
 import copy
 from typing import List
+import json
+
+import self as self
 
 from src.DiGraph import DiGraph
 from src.GraphAlgoInterface import GraphAlgoInterface
@@ -12,10 +15,52 @@ class GraphAlgo(GraphAlgoInterface):
         self.dists = {}
 
     def load_from_json(self, file_name: str) -> bool:
-        pass
+        new_graph=DiGraph()
+        f = open(file_name, "r")
+        universe_json=f.read()
+        f.close()
+        universe_dict=json.loads(universe_json)
+        all_edges=universe_dict.get("Edges")
+        all_nodes=universe_dict.get("Nodes")
+        for node in all_nodes:
+            if node.get("pos") is not None:
+                new_graph.add_node(node.get("id"),tuple(map(float,node.get("pos").split(','))))
+            else:
+                new_graph.add_node(all_nodes[node].get("id"))
+
+        for edge in all_edges:
+            new_graph.add_edge(int(edge.get("src")),int(edge.get("dest")),float(edge.get("w")))
+        self.graph=new_graph
+        return True
+    #TODO how to do try and except
+
+
+
 
     def save_to_json(self, file_name: str) -> bool:
-        pass
+        f = open(file_name, "w")
+        edges_list = []
+        nodes_list = []
+        for keys in self.graph.get_all_e().keys():
+            for keys_out in self.graph.all_out_edges_of_node(keys).keys():
+                temp_edge_dict={"src":keys,"w":self.graph.all_out_edges_of_node(keys).get(keys_out),"dest":keys_out}
+                edges_list.append(temp_edge_dict)
+            pos_tuple = self.graph.get_all_v().get(keys)
+            pos_str = ",".join(map(str,pos_tuple))
+            temp_node_dict = {"pos": pos_str, "id": keys}
+            nodes_list.append(temp_node_dict)
+        universe={"Edges":edges_list,"Nodes": nodes_list}
+        universe_json=json.dumps(universe)
+        f.write(universe_json)
+        f.close()
+        return True
+    #TODO how to do try and except
+
+
+
+
+
+
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         if id1 is id2:
