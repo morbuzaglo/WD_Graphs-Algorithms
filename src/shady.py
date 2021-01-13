@@ -30,9 +30,14 @@ def check_graph():
     print(g.get_all_v())
 
     print("mc = ", g.get_mc())
-    algo.save_to_json("this.JSON")
-    algo.load_from_json("this.JSON")
-    algo.save_to_json("this1.JSON")
+  #  algo.save_to_json("C:\\Users\\shady\\Documents\\GitHub\\OOP---Python\\data\\this.JSON")
+    algo.load_from_json("C:\\Users\\shady\\Documents\\GitHub\\OOP---Python\\data\\G_100_800_1.json")
+  #  algo.save_to_json("C:\\Users\\shady\\Documents\\GitHub\\OOP---Python\\data\\G_100_800_1_mine.json")
+   # algo.load_from_json("C:\\Users\\shady\\Documents\\GitHub\\OOP---Python\\data\\G_100_800_1_mine.json")
+    #algo.save_to_json("C:\\Users\\shady\\Documents\\GitHub\\OOP---Python\\data\\G_100_800_2_mine.json")
+    algo.connected_components()
+
+
 
 
 

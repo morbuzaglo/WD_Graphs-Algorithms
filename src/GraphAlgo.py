@@ -47,9 +47,9 @@ class GraphAlgo(GraphAlgoInterface):
                 edges_list.append(temp_edge_dict)
             pos_tuple = self.graph.get_all_v().get(keys)
             pos_str = ",".join(map(str,pos_tuple))
-            temp_node_dict = {"pos": pos_str, "id": keys}
+            temp_node_dict = {"pos":pos_str,"id":keys}
             nodes_list.append(temp_node_dict)
-        universe={"Edges":edges_list,"Nodes": nodes_list}
+        universe={"Edges":edges_list,"Nodes":nodes_list}
         universe_json=json.dumps(universe)
         f.write(universe_json)
         f.close()
