@@ -19,7 +19,7 @@ def check():
     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
     [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47]]
     """
-    check0()
+    #check0()
     check1()
     check2()
 
@@ -30,58 +30,22 @@ def check0():
     :return:
     """
     g = DiGraph()  # creates an empty directed graph
-    # for n in range(8):
-    #     g.add_node(n)
-    # g.add_edge(0, 1, 1)
-    # g.add_edge(1, 0, 1.1)
-    # g.add_edge(1, 2, 1.3)
-    # g.add_edge(2, 3, 1.1)
-    # g.add_edge(1, 3, 1.9)
-    # g.remove_edge(1, 3)
-    # g.add_edge(1, 3, 10)
-    # print(g)  # prints the __repr__ (func output)
-    # print(g.get_all_v())  # prints a dict with all the graph's vertices.
-    # print(g.all_in_edges_of_node(1))
-    # print(g.all_out_edges_of_node(1))
-    # print(g_algo.shortest_path(0, 3))
-    # g_algo.plot_graph()
-    #
-    #
-    #
-    # print(g_algo.shortest_path(0, 0))
-    # print(g_algo.shortest_path(0, 6))
-    # print(g_algo.shortest_path(3, 2))
-
-    # g.add_edge(0, 1, 5.0)
-    # g.add_edge(1, 2, 5.0)
-    # g.add_edge(2, 0, 5.0)
-    # g.add_edge(1, 3, 5.0)
-    # g.add_edge(3, 4, 5.0)
-    # # g.add_edge(4, 1, 5.0)
-
-    for n in range(8):
+    for n in range(4):
         g.add_node(n)
-
-    g.add_edge(1, 2, 5.0)
-    g.add_edge(2, 3, 5.0)
-    g.add_edge(3, 1, 5.0)
-    g.add_edge(2, 4, 5.0)
-    g.add_edge(4, 7, 5.0)
-    g.add_edge(4, 5, 5.0)
-    g.add_edge(5, 4, 5.0)
-    g.add_edge(5, 6, 5.0)
-    g.add_edge(6, 5, 5.0)
-    g.add_edge(6, 7, 5.0)
-    # print(g_algo.connected_components())
-    g_algo = GraphAlgo()
-    # print(g_algo.connected_components())
-
-    # g.__str__()
-    # g_algo.__str__()
-    g_algo.load_from_json("C:\\Users\\shady\\Documents\\GitHub\\OOP---Python\\data\\G_10_80_1.json")
+    g.add_edge(0, 1, 1)
+    g.add_edge(1, 0, 1.1)
+    g.add_edge(1, 2, 1.3)
+    g.add_edge(2, 3, 1.1)
+    g.add_edge(1, 3, 1.9)
+    g.remove_edge(1, 3)
+    g.add_edge(1, 3, 10)
+    print(g)  # prints the __repr__ (func output)
+    print(g.get_all_v())  # prints a dict with all the graph's vertices.
+    print(g.all_in_edges_of_node(1))
+    print(g.all_out_edges_of_node(1))
+    g_algo = GraphAlgo(g)
+    print(g_algo.shortest_path(0, 3))
     g_algo.plot_graph()
-
-
 
 
 def check1():
@@ -122,4 +86,4 @@ def check2():
 
 
 if __name__ == '__main__':
-    check0()
+    check()

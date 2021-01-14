@@ -14,7 +14,7 @@ from src.GraphAlgoInterface import GraphAlgoInterface
 
 class GraphAlgo(GraphAlgoInterface):
 
-    def _init_(self, graph: DiGraph = None) -> None:
+    def __init__(self, graph: DiGraph = None) -> None:
         if graph is not None:
             self.graph = graph
         else:
