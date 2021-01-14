@@ -5,7 +5,9 @@ import math
 import matplotlib.pyplot as plt
 from typing import List
 
+from src import GraphInterface
 
+"""This abstract class represents an interface of a graph."""
 from src.DiGraph import DiGraph
 from src.GraphAlgoInterface import GraphAlgoInterface
 
@@ -15,6 +17,13 @@ class GraphAlgo(GraphAlgoInterface):
     def __init__(self, graph: DiGraph) -> None:
         self.graph = graph
         self.dists = {}
+
+    def get_graph(self) -> GraphInterface:
+        return self.graph
+
+    """
+            :return: the directed graph on which the algorithm works on.
+    """
 
     def load_from_json(self, file_name: str) -> bool:
         new_graph = DiGraph()
@@ -36,6 +45,11 @@ class GraphAlgo(GraphAlgoInterface):
         return True
 
     # TODO how to do try and except
+    """
+            Loads a graph from a json file.
+            @param file_name: The path to the json file
+            @returns True if the loading was successful, False o.w.
+    """
 
     def save_to_json(self, file_name: str) -> bool:
         f = open(file_name, "w")
@@ -57,6 +71,11 @@ class GraphAlgo(GraphAlgoInterface):
         return True
 
     # TODO how to do try and except
+    """
+            Saves the graph in JSON format to a file
+            @param file_name: The path to the out file
+            @return: True if the save was successful, False o.w.
+    """
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         if id1 is id2:
@@ -97,6 +116,13 @@ class GraphAlgo(GraphAlgoInterface):
         self.dists = dists
         return dists[id2], paths[id2]
 
+    """
+            Returns the shortest path from node id1 to node id2 using Dijkstra's Algorithm
+            @param id1: The start node id
+            @param id2: The end node id
+            @return: The distance of the path, a list of the nodes ids that the path goes through
+    """
+
     def connected_component(self, id1: int) -> list:
         if self.graph is None or self.graph.get_all_v().__contains__(id1) is False:
             return []
@@ -110,6 +136,14 @@ class GraphAlgo(GraphAlgoInterface):
                 break
 
         return des_comp
+
+    """
+            Finds the Strongly Connected Component(SCC) that node id1 is a part of.
+            @param id1: The node id
+            @return: The list of nodes in the SCC
+            Notes:
+            If the graph is None or id1 is not in the graph, the function should return an empty list []
+    """
 
     def connected_components(self) -> List[list]:
         if self.graph is None:
@@ -150,10 +184,18 @@ class GraphAlgo(GraphAlgoInterface):
 
             return comps
 
+    """
+            Finds all the Strongly Connected Component(SCC) in the graph.
+            @return: The list all SCC
+            Notes:
+            If the graph is None the function should return an empty list []
+    """
+
     def plot_graph(self) -> None:
 
         ax = plt.axes()
-        R = min((self.MinMaxPoints()[0][1]-self.MinMaxPoints()[0][0])/20.0, (self.MinMaxPoints()[1][1]-self.MinMaxPoints()[1][0])/20.0)
+        R = min((self.MinMaxPoints()[0][1] - self.MinMaxPoints()[0][0]) / 20.0,
+                (self.MinMaxPoints()[1][1] - self.MinMaxPoints()[1][0]) / 20.0)
 
         for k1 in self.graph.get_all_v().keys():
             for k2 in self.graph.all_out_edges_of_node(k1):
@@ -165,19 +207,28 @@ class GraphAlgo(GraphAlgoInterface):
                 x2 = pos2[0]
                 y2 = pos2[1]
 
-                alfa = math.atan2(y2-y1, x2-x1)
-                ax.arrow(x1, y1, x2-x1 - 2*R*math.cos(alfa), y2-y1 - 2*R*math.sin(alfa), head_width=R/3, head_length=R, fc='k', ec='k')
-                ax.text((x2+x1)/2-R/2, (y2+y1)/2+R/2, f"{self.graph.get_all_e().get(k1)[0].get(k2)}", fontsize=9, color='r')
+                alfa = math.atan2(y2 - y1, x2 - x1)
+                ax.arrow(x1, y1, x2 - x1 - 2 * R * math.cos(alfa), y2 - y1 - 2 * R * math.sin(alfa), head_width=R / 3,
+                         head_length=R, fc='k', ec='k')
+                ax.text((x2 + x1) / 2 - R / 2, (y2 + y1) / 2 + R / 2, f"{self.graph.get_all_e().get(k1)[0].get(k2)}",
+                        fontsize=9, color='r')
 
         for k1 in self.graph.get_all_v().keys():
             pos = self.graph.get_all_v().get(k1)
             circle = plt.Circle((pos[0], pos[1]), R, color='r')
-            ax.text(pos[0]-R/4, pos[1]-R/4, f"{k1}", fontsize=9, color='w')
+            ax.text(pos[0] - R / 4, pos[1] - R / 4, f"{k1}", fontsize=9, color='w')
 
             ax.add_artist(circle)
 
         ax.set(xlim=self.MinMaxPoints()[0], ylim=self.MinMaxPoints()[1])
         plt.show()
+
+    """
+            Plots the graph.
+            If the nodes have a position, the nodes will be placed there.
+            Otherwise, they will be placed in a random but elegant manner.
+            @return: None
+    """
 
     def MinMaxPoints(self) -> ((float, float), (float, float)):  # ((xmin, xmax), (ymin, ymax))
         if self.graph is None or self.graph.v_size() is 0:
@@ -201,10 +252,10 @@ class GraphAlgo(GraphAlgoInterface):
                     if n[1] < ymin:
                         ymin = n[1]
 
-            dx_add = (xmax-xmin)*0.1
-            dy_add = (ymax-ymin)*0.1
+            dx_add = (xmax - xmin) * 0.1
+            dy_add = (ymax - ymin) * 0.1
 
-            return (xmin-dx_add, xmax+dx_add), (ymin-dy_add, ymax+dy_add)
+            return (xmin - dx_add, xmax + dx_add), (ymin - dy_add, ymax + dy_add)
 
     def __str__(self):
         self.graph.__str__()
