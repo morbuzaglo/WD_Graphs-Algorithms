@@ -1,8 +1,10 @@
 import copy
-from typing import List
 import json
+import math
 
-import self as self
+import matplotlib.pyplot as plt
+from typing import List
+
 
 from src.DiGraph import DiGraph
 from src.GraphAlgoInterface import GraphAlgoInterface
@@ -15,27 +17,25 @@ class GraphAlgo(GraphAlgoInterface):
         self.dists = {}
 
     def load_from_json(self, file_name: str) -> bool:
-        new_graph=DiGraph()
+        new_graph = DiGraph()
         f = open(file_name, "r")
-        universe_json=f.read()
+        universe_json = f.read()
         f.close()
-        universe_dict=json.loads(universe_json)
-        all_edges=universe_dict.get("Edges")
-        all_nodes=universe_dict.get("Nodes")
+        universe_dict = json.loads(universe_json)
+        all_edges = universe_dict.get("Edges")
+        all_nodes = universe_dict.get("Nodes")
         for node in all_nodes:
             if node.get("pos") is not None:
-                new_graph.add_node(node.get("id"),tuple(map(float,node.get("pos").split(','))))
+                new_graph.add_node(node.get("id"), tuple(map(float, node.get("pos").split(','))))
             else:
                 new_graph.add_node(all_nodes[node].get("id"))
 
         for edge in all_edges:
-            new_graph.add_edge(int(edge.get("src")),int(edge.get("dest")),float(edge.get("w")))
-        self.graph=new_graph
+            new_graph.add_edge(int(edge.get("src")), int(edge.get("dest")), float(edge.get("w")))
+        self.graph = new_graph
         return True
-    #TODO how to do try and except
 
-
-
+    # TODO how to do try and except
 
     def save_to_json(self, file_name: str) -> bool:
         f = open(file_name, "w")
@@ -43,24 +43,20 @@ class GraphAlgo(GraphAlgoInterface):
         nodes_list = []
         for keys in self.graph.get_all_e().keys():
             for keys_out in self.graph.all_out_edges_of_node(keys).keys():
-                temp_edge_dict={"src":keys,"w":self.graph.all_out_edges_of_node(keys).get(keys_out),"dest":keys_out}
+                temp_edge_dict = {"src": keys, "w": self.graph.all_out_edges_of_node(keys).get(keys_out),
+                                  "dest": keys_out}
                 edges_list.append(temp_edge_dict)
             pos_tuple = self.graph.get_all_v().get(keys)
-            pos_str = ",".join(map(str,pos_tuple))
-            temp_node_dict = {"pos":pos_str,"id":keys}
+            pos_str = ",".join(map(str, pos_tuple))
+            temp_node_dict = {"pos": pos_str, "id": keys}
             nodes_list.append(temp_node_dict)
-        universe={"Edges":edges_list,"Nodes":nodes_list}
-        universe_json=json.dumps(universe)
+        universe = {"Edges": edges_list, "Nodes": nodes_list}
+        universe_json = json.dumps(universe)
         f.write(universe_json)
         f.close()
         return True
-    #TODO how to do try and except
 
-
-
-
-
-
+    # TODO how to do try and except
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         if id1 is id2:
@@ -155,7 +151,68 @@ class GraphAlgo(GraphAlgoInterface):
             return comps
 
     def plot_graph(self) -> None:
-        pass
+
+        ax = plt.axes()
+        R = min((self.MinMaxPoints()[0][1]-self.MinMaxPoints()[0][0])/20.0, (self.MinMaxPoints()[1][1]-self.MinMaxPoints()[1][0])/20.0)
+
+        for k1 in self.graph.get_all_v().keys():
+            for k2 in self.graph.all_out_edges_of_node(k1):
+                pos1 = self.graph.get_all_v().get(k1)
+                pos2 = self.graph.get_all_v().get(k2)
+
+                x1 = pos1[0]
+                y1 = pos1[1]
+                x2 = pos2[0]
+                y2 = pos2[1]
+
+                alfa = math.atan2(y2-y1, x2-x1)
+                ax.arrow(x1, y1, x2-x1 - 2*R*math.cos(alfa), y2-y1 - 2*R*math.sin(alfa), head_width=R/3, head_length=R, fc='k', ec='k')
+                ax.text((x2+x1)/2-R/2, (y2+y1)/2+R/2, f"{self.graph.get_all_e().get(k1)[0].get(k2)}", fontsize=9, color='r')
+
+        for k1 in self.graph.get_all_v().keys():
+            pos = self.graph.get_all_v().get(k1)
+            circle = plt.Circle((pos[0], pos[1]), R, color='r')
+            ax.text(pos[0]-R/4, pos[1]-R/4, f"{k1}", fontsize=9, color='w')
+
+            ax.add_artist(circle)
+
+        ax.set(xlim=self.MinMaxPoints()[0], ylim=self.MinMaxPoints()[1])
+        plt.show()
+
+    def MinMaxPoints(self) -> ((float, float), (float, float)):  # ((xmin, xmax), (ymin, ymax))
+        if self.graph is None or self.graph.v_size() is 0:
+            return (None, None), (None, None)
+        else:
+            xmin = self.graph.get_all_v().values().__iter__().__next__()[0]
+            xmax = xmin
+            ymin = self.graph.get_all_v().values().__iter__().__next__()[1]
+            ymax = ymin
+
+            for n in self.graph.get_all_v().values():
+                if n[0] > xmax:
+                    xmax = n[0]
+                else:
+                    if n[0] < xmin:
+                        xmin = n[0]
+
+                if n[1] > ymax:
+                    ymax = n[1]
+                else:
+                    if n[1] < ymin:
+                        ymin = n[1]
+
+            dx_add = (xmax-xmin)*0.1
+            dy_add = (ymax-ymin)*0.1
+
+            return (xmin-dx_add, xmax+dx_add), (ymin-dy_add, ymax+dy_add)
 
     def __str__(self):
-        pass
+        self.graph.__str__()
+        print("\nStrongly Connected Components in graph:")
+        i = 0
+        for comp in self.connected_components():
+            i = i + 1
+            print(f"Component {i}: {comp}")
+
+    def __repr__(self):
+        self.__str__()

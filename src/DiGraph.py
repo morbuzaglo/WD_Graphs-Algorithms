@@ -2,9 +2,8 @@ import copy
 import random
 
 from src.GraphInterface import GraphInterface
-from src.NodeData import NodeData
 
-random.seed(10)
+random.seed(11)
 
 
 class DiGraph(GraphInterface):
@@ -20,7 +19,7 @@ class DiGraph(GraphInterface):
     def e_size(self) -> int:
         s = 0
         for val in self.__e.values():
-            s = s + len(val)
+            s = s + len(val[0])
         return s
 
     def get_mc(self) -> int:
@@ -95,5 +94,12 @@ class DiGraph(GraphInterface):
         return self.__e
 
     def __str__(self):
-        pass
+        print(f"Directed Graph:")
+        print(f"|V| = {self.v_size()}, |E| = {self.e_size()}")
+        print("Nodes and Edges:  {key: (out_nodes, in_nodes), ...}")
+        print(self.__e)
+
+    def __repr__(self):
+        self.__str__()
+
 
