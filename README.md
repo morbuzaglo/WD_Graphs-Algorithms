@@ -8,3 +8,4 @@ As a part of the "Object Oriented Programming", we created a project the impleme
 
 - `connected_components` - returns all the SCC lists in the graph.
 
+In the wiki page yo can see the comparations between our java, our pyhton and the NetworkX library.
