@@ -14,9 +14,11 @@ from src.GraphAlgoInterface import GraphAlgoInterface
 
 class GraphAlgo(GraphAlgoInterface):
 
-    def __init__(self, graph: DiGraph) -> None:
-        self.graph = graph
-        self.dists = {}
+    def _init_(self, graph: DiGraph = None) -> None:
+        if graph is not None:
+            self.graph = graph
+        else:
+            self.graph = None
 
     def get_graph(self) -> GraphInterface:
         return self.graph
@@ -26,7 +28,7 @@ class GraphAlgo(GraphAlgoInterface):
     """
 
     def load_from_json(self, file_name: str) -> bool:
-        with open(file_name,'r') as f:
+        with open(file_name, 'r') as f:
             new_graph = DiGraph()
             f = open(file_name, "r")
             universe_json = f.read()
@@ -53,7 +55,7 @@ class GraphAlgo(GraphAlgoInterface):
     """
 
     def save_to_json(self, file_name: str) -> bool:
-        with open(file_name,'w') as f:
+        with open(file_name, 'w') as f:
             if self.g is not None:
                 f = open(file_name, "w")
                 edges_list = []
@@ -75,8 +77,6 @@ class GraphAlgo(GraphAlgoInterface):
             else:
                 return False
 
-
-
     # TODO how to do try and except
     """
             Saves the graph in JSON format to a file
@@ -85,43 +85,47 @@ class GraphAlgo(GraphAlgoInterface):
     """
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
-        if id1 is id2:
-            return 0.0, [id1]
 
         t1 = self.graph.get_all_v().__contains__(id1)
         t2 = self.graph.get_all_v().__contains__(id2)
 
         if t1 is False or t2 is False:
             return float('inf'), []
-        else:
-            nodes = self.graph.get_all_v()
-            paths = {}  # dict[list]
-            dists = {}
-            queue = []
+        elif id1 is id2:
+            return 0.0, [id1]
 
-            for key in nodes.keys():
-                dists[key] = float('inf')
-                paths.update({key: []})
+        nodes = self.graph.get_all_v()
+        father = {}  # father
+        dists = {}
+        queue = []
 
-            queue.append(id1)
-            dists[id1] = 0.0
-            paths[id1].append(id1)
+        for key in nodes.keys():
+            dists[key] = float('inf')
 
-            while len(queue) != 0:
-                id1 = queue.pop()
+        queue.append(id1)
+        dists[id1] = 0.0
+        father[id1] = -1  # STOP condition
 
-                for nei in self.graph.all_out_edges_of_node(id1).keys():
-                    d1 = dists[id1]
-                    d2 = self.graph.all_out_edges_of_node(id1).get(nei)
+        while queue:
+            id1 = queue.pop()
 
-                    if dists[nei] > (d1 + d2):
-                        dists[nei] = d1 + d2
-                        paths[nei] = copy.deepcopy(paths[id1])
-                        paths[nei].append(nei)
-                        queue.append(nei)
+            for nei in self.graph.all_out_edges_of_node(id1).keys():
+                d1 = dists[id1]
+                d2 = self.graph.all_out_edges_of_node(id1).get(nei)
 
-        self.dists = dists
-        return dists[id2], paths[id2]
+                if dists[nei] > (d1 + d2):
+                    dists[nei] = d1 + d2
+                    father[nei] = id1
+                    queue.append(nei)
+
+        key = id2
+        paths = []
+
+        while key != -1:
+            paths.insert(0, key)
+            key = father[key]
+
+        return dists[id2], paths
 
     """
             Returns the shortest path from node id1 to node id2 using Dijkstra's Algorithm
@@ -159,37 +163,62 @@ class GraphAlgo(GraphAlgoInterface):
             comps = []  # List[list]
             nodes = copy.deepcopy(self.graph.get_all_v())
 
-            while len(nodes) != 0:
+            while len(nodes) > 1:
                 comp = []  # list
-                n = nodes.keys().__iter__().__next__()
-                comp.append(n)
 
-                queue = [n]
+                it = nodes.keys().__iter__()
+                n1 = it.__next__()
 
-                while len(queue) != 0:
-                    s = queue.pop()
-                    del nodes[s]
+                dists_out = self.dfs(n1)
+                dists_in = self.dfs_opp(n1)
 
-                    for nei in self.graph.all_out_edges_of_node(s).keys():
-                        if nodes.keys().__contains__(nei):
-                            queue.append(nei)
-                        if comp.__contains__(nei) is False:
-                            self.shortest_path(nei, s)
-
-                            comp_copy = copy.deepcopy(comp)
-                            b = True
-                            for c in comp_copy:
-                                if (self.dists[c] < float('inf')) is False:
-                                    b = False
-                                    queue.remove(nei)
-                                    break
-
-                            if b is True:
-                                comp.append(nei)
+                for n in self.graph.get_all_v().keys():
+                    if dists_out.__contains__(n) and dists_in.__contains__(n) and nodes.__contains__(n):
+                        comp.append(n)
+                        del nodes[n]
 
                 comps.append(comp)
 
+            if len(nodes) == 1:
+                comp = [nodes.__iter__().__next__()]
+                comps.append(comp)
+
             return comps
+
+    def dfs(self, id1) -> list:
+
+        dists = {}
+        queue = [id1]
+
+        dists[id1] = 1
+
+        while queue:
+            id1 = queue.pop()
+
+            for nei in self.graph.all_out_edges_of_node(id1).keys():
+                if not dists.__contains__(nei):
+                    dists[nei] = 1
+                    queue.append(nei)
+
+        return dists
+
+    def dfs_opp(self, id1) -> list:
+
+        dists = {}
+        queue = []
+
+        queue.append(id1)
+        dists[id1] = 1
+
+        while queue:
+            id1 = queue.pop()
+
+            for nei in self.graph.all_in_edges_of_node(id1).keys():
+                if not dists.__contains__(nei):
+                    dists[nei] = 1
+                    queue.append(nei)
+
+        return dists
 
     """
             Finds all the Strongly Connected Component(SCC) in the graph.
@@ -201,11 +230,15 @@ class GraphAlgo(GraphAlgoInterface):
     def plot_graph(self) -> None:
 
         ax = plt.axes()
-        R = min((self.MinMaxPoints()[0][1] - self.MinMaxPoints()[0][0]) / 20.0,
-                (self.MinMaxPoints()[1][1] - self.MinMaxPoints()[1][0]) / 20.0)
+        R = min((self.MinMaxPoints()[0][1] - self.MinMaxPoints()[0][0]) / 30.0,
+                (self.MinMaxPoints()[1][1] - self.MinMaxPoints()[1][0]) / 30.0)
 
         for k1 in self.graph.get_all_v().keys():
             for k2 in self.graph.all_out_edges_of_node(k1):
+
+                if k1 == k2:
+                    continue
+
                 pos1 = self.graph.get_all_v().get(k1)
                 pos2 = self.graph.get_all_v().get(k2)
 
@@ -217,8 +250,8 @@ class GraphAlgo(GraphAlgoInterface):
                 alfa = math.atan2(y2 - y1, x2 - x1)
                 ax.arrow(x1, y1, x2 - x1 - 2 * R * math.cos(alfa), y2 - y1 - 2 * R * math.sin(alfa), head_width=R / 3,
                          head_length=R, fc='k', ec='k')
-                ax.text((x2 + x1) / 2 - R / 2, (y2 + y1) / 2 + R / 2, f"{self.graph.get_all_e().get(k1)[0].get(k2)}",
-                        fontsize=9, color='r')
+                # ax.text((x2 + x1) / 2 - R / 2, (y2 + y1) / 2 + R / 2, f"{self.graph.get_all_e().get(k1)[0].get(k2)}",
+                # fontsize=9, color='r')
 
         for k1 in self.graph.get_all_v().keys():
             pos = self.graph.get_all_v().get(k1)
@@ -238,7 +271,7 @@ class GraphAlgo(GraphAlgoInterface):
     """
 
     def MinMaxPoints(self) -> ((float, float), (float, float)):  # ((xmin, xmax), (ymin, ymax))
-        if self.graph is None or self.graph.v_size() is 0:
+        if self.graph is None or self.graph.v_size() == 0:
             return (None, None), (None, None)
         else:
             xmin = self.graph.get_all_v().values().__iter__().__next__()[0]
@@ -264,13 +297,14 @@ class GraphAlgo(GraphAlgoInterface):
 
             return (xmin - dx_add, xmax + dx_add), (ymin - dy_add, ymax + dy_add)
 
-    def __str__(self):
-        self.graph.__str__()
-        print("\nStrongly Connected Components in graph:")
+    def _str_(self):
+        s = "Strongly Connected Components in graph:\n"
         i = 0
         for comp in self.connected_components():
             i = i + 1
-            print(f"Component {i}: {comp}")
+            s = s + f"Component {i}: {comp}\n"
 
-    def __repr__(self):
-        self.__str__()
+        return s
+
+    def _repr_(self):
+        return self.__str__()

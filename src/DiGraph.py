@@ -63,7 +63,6 @@ class DiGraph(GraphInterface):
             Note: If the edge already exists or one of the nodes dose not exists the functions will do nothing
     """
 
-
     def add_node(self, node_id: int, pos: tuple = None) -> bool:
         if self.__v.get(node_id) is not None:
             return False
@@ -90,7 +89,7 @@ class DiGraph(GraphInterface):
         if self.__v.get(node_id) is None:
             return False
         else:
-            self.__mc = self.__mc + len(self.__e.get(node_id)[0]) + len(self.__e.get(node_id)[1]) + 1
+            self.__mc = self.__mc + 1
 
             e_copy = copy.deepcopy(self.__e)
 
@@ -156,12 +155,9 @@ class DiGraph(GraphInterface):
         return self.__e
 
     def __str__(self):
-        print(f"Directed Graph:")
-        print(f"|V| = {self.v_size()}, |E| = {self.e_size()}")
-        print("Nodes and Edges:  {key: (out_nodes, in_nodes), ...}")
-        print(self.__e)
+        s = f"Directed Graph:\n|V| = {self.v_size()}, |E| = {self.e_size()}\nNode and Edges:\n {self.__e} "
+        return s
 
     def __repr__(self):
         self.__str__()
-
 

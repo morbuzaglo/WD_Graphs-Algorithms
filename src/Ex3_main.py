@@ -73,12 +73,12 @@ def check0():
     g.add_edge(6, 5, 5.0)
     g.add_edge(6, 7, 5.0)
     # print(g_algo.connected_components())
-    g_algo = GraphAlgo(g)
+    g_algo = GraphAlgo()
     # print(g_algo.connected_components())
 
     # g.__str__()
     # g_algo.__str__()
-
+    g_algo.load_from_json("C:\\Users\\shady\\Documents\\GitHub\\OOP---Python\\data\\G_10_80_1.json")
     g_algo.plot_graph()
 
 
