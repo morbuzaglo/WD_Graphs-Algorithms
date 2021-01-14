@@ -40,7 +40,7 @@ class GraphAlgo(GraphAlgoInterface):
                 if node.get("pos") is not None:
                     new_graph.add_node(node.get("id"), tuple(map(float, node.get("pos").split(','))))
                 else:
-                    new_graph.add_node(all_nodes[node].get("id"))
+                    new_graph.add_node(node.get("id"))
 
             for edge in all_edges:
                 new_graph.add_edge(int(edge.get("src")), int(edge.get("dest")), float(edge.get("w")))
@@ -56,7 +56,7 @@ class GraphAlgo(GraphAlgoInterface):
 
     def save_to_json(self, file_name: str) -> bool:
         with open(file_name, 'w') as f:
-            if self.g is not None:
+            if self.graph is not None:
                 f = open(file_name, "w")
                 edges_list = []
                 nodes_list = []
@@ -117,8 +117,10 @@ class GraphAlgo(GraphAlgoInterface):
                     dists[nei] = d1 + d2
                     father[nei] = id1
                     queue.append(nei)
-
-        key = id2
+        if dists[id2]<float('inf'):
+            key = id2
+        else:
+            key=-1
         paths = []
 
         while key != -1:
@@ -228,7 +230,6 @@ class GraphAlgo(GraphAlgoInterface):
     """
 
     def plot_graph(self) -> None:
-
         ax = plt.axes()
         R = min((self.MinMaxPoints()[0][1] - self.MinMaxPoints()[0][0]) / 30.0,
                 (self.MinMaxPoints()[1][1] - self.MinMaxPoints()[1][0]) / 30.0)
@@ -248,8 +249,7 @@ class GraphAlgo(GraphAlgoInterface):
                 y2 = pos2[1]
 
                 alfa = math.atan2(y2 - y1, x2 - x1)
-                ax.arrow(x1, y1, x2 - x1 - 2 * R * math.cos(alfa), y2 - y1 - 2 * R * math.sin(alfa), head_width=R / 3,
-                         head_length=R, fc='k', ec='k')
+                ax.arrow(x1, y1, x2 - x1 - 2 * R * math.cos(alfa), y2 - y1 - 2 * R * math.sin(alfa), head_width=R / 30, head_length=R, fc='k', ec='k')
                 # ax.text((x2 + x1) / 2 - R / 2, (y2 + y1) / 2 + R / 2, f"{self.graph.get_all_e().get(k1)[0].get(k2)}",
                 # fontsize=9, color='r')
 
