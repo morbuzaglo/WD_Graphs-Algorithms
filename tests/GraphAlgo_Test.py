@@ -17,8 +17,8 @@ def start_Digraph() -> GraphAlgo:
 class MyTestCase(unittest.TestCase):
 
     def test_load_and_save_graph(self):
-        file_name = "C:\\Users\\shady\\Documents\\GitHub\\OOP---Python\\data\\G_10_80_1.json"
-        new_file_name = "C:\\Users\\shady\\Documents\\GitHub\\OOP---Python\\data\\G_10_80_1_mine.json"
+        file_name = "C:\\Users\\shady\\Documents\\GitHub\\OOP---Python\\data\\T0.json"
+        new_file_name = "C:\\Users\\shady\\Documents\\GitHub\\OOP---Python\\data\\T0json_saved.json"
         graph = DiGraph()
         graph_algo = GraphAlgo(graph)
         self.assertEqual(True, graph_algo.load_from_json(file_name))

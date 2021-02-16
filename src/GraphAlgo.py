@@ -46,8 +46,9 @@ class GraphAlgo(GraphAlgoInterface):
                 new_graph.add_edge(int(edge.get("src")), int(edge.get("dest")), float(edge.get("w")))
             self.graph = new_graph
             return True
+        return False
 
-    # TODO how to do try and except
+    # TODO new commit check
     """
             Loads a graph from a json file.
             @param file_name: The path to the json file
@@ -77,7 +78,7 @@ class GraphAlgo(GraphAlgoInterface):
             else:
                 return False
 
-    # TODO how to do try and except
+    # TODO new commit check
     """
             Saves the graph in JSON format to a file
             @param file_name: The path to the out file
